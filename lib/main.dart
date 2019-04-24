@@ -7,9 +7,11 @@ import './provide/category_goods_list.dart';
 import './provide/home.dart';
 import './provide/details_info.dart';
 import './provide/cart.dart';
+import './provide/currentIndex.dart';
 import './pages/index_page.dart';
 import './routers/routers.dart';
 import './routers/application.dart';
+
 
 void main(){
   var counter =Counter();
@@ -19,6 +21,7 @@ void main(){
   var detailsInfo = DetailsInfoProvide();
   var homeInfo = HomeInfoProvide();
   var cartInfo = CartProvide();
+  var currentIndex  = CurrentIndexprovide();
   providers
     ..provide(Provider<Counter>.value(counter))
     ..provide(Provider<ChildCategory>.value(chidCategory))
@@ -26,6 +29,7 @@ void main(){
     ..provide(Provider<DetailsInfoProvide>.value(detailsInfo))
     ..provide(Provider<HomeInfoProvide>.value(homeInfo))
     ..provide(Provider<CartProvide>.value(cartInfo))
+    ..provide(Provider<CurrentIndexprovide>.value(currentIndex))
     ;
   runApp(ProviderNode(child:MyApp(),providers:providers));
 }

@@ -6,9 +6,16 @@ import '../model/cartInfo.dart';
 class CartProvide with ChangeNotifier {
   String cartString = '[]';
   List<CartInfoModel> cartList = [];
-  double allPrice =0 ;   //总价格
-  int allGoodsCount =0;  //商品总数量
-  save(goodsId, goodsName, count, price, images,) async {
+  double allPrice = 0; //总价格
+  int allGoodsCount = 0; //商品总数量
+  bool isAllCheck= true; //是否全选
+  save(
+    goodsId,
+    goodsName,
+    count,
+    price,
+    images,
+  ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     cartString = prefs.getString('cartInfo');
     var temp = cartString == null ? [] : json.decode(cartString.toString());
@@ -38,7 +45,7 @@ class CartProvide with ChangeNotifier {
     cartString = json.encode(tempList).toString();
     print(cartString);
     prefs.setString('cartInfo', cartString);
-    await this.getCartInfo();
+    await getCartInfo();
     notifyListeners();
   }
 
@@ -54,17 +61,21 @@ class CartProvide with ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     cartString = prefs.getString('cartInfo');
     cartList = [];
-    print('getCartInfo');
     if (cartString == null) {
       cartList = [];
     } else {
       List<Map> tempList = (json.decode(cartString.toString()) as List).cast();
-      allPrice =0 ;   //总价格
-      allGoodsCount =0;  //商品总数量
+      allPrice = 0; //总价格
+      allGoodsCount = 0; //商品总数量
+      isAllCheck = true;
       tempList.forEach((item) {
         cartList.add(CartInfoModel.fromJson(item));
-        allPrice += item['count']*item['price'];
-        allGoodsCount += item['count'];
+        if (item['isCheck']) {
+          allPrice += item['count'] * item['price'];
+          allGoodsCount += item['count'];
+        }else{
+          isAllCheck = false;
+        }
       });
     }
     print('allGoodsCount:${allGoodsCount},allPrice${allPrice}');
@@ -88,9 +99,10 @@ class CartProvide with ChangeNotifier {
     cartString = json.encode(tempList).toString();
     print(cartString);
     prefs.setString('cartInfo', cartString);
-    await this.getCartInfo();
+    await getCartInfo();
     notifyListeners();
   }
+
   reduce(String goodsId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     cartString = prefs.getString('cartInfo');
@@ -105,15 +117,52 @@ class CartProvide with ChangeNotifier {
       tempIndex++;
     });
     if (tempList[delIndex]['count'] > 1) {
-      tempList[delIndex]['count'] -=1;
+      tempList[delIndex]['count'] -= 1;
     } else {
       tempList.removeAt(delIndex);
     }
     cartString = json.encode(tempList).toString();
     print(cartString);
     prefs.setString('cartInfo', cartString);
-    await this.getCartInfo();
+    await getCartInfo();
+    notifyListeners();
+  }
+
+  changeCheckState(CartInfoModel cartItem) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    cartString = prefs.getString('cartInfo');
+    var temp = cartString == null ? [] : json.decode(cartString.toString());
+    List<Map> tempList = (temp as List).cast();
+    int tempIndex = 0;
+    int changeIndex = 0;
+    tempList.forEach((item) {
+      if (item['goodsId'] == cartItem.goodsId) {
+        changeIndex = tempIndex;
+      }
+      tempIndex++;
+    });
+    tempList[changeIndex] = cartItem.toJson();
+    cartString = json.encode(tempList).toString();
+    print(cartString);
+    prefs.setString('cartInfo', cartString);
+    await getCartInfo();
+    notifyListeners();
+  }
+  changeAllCheckState(bool isCheck) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    cartString = prefs.getString('cartInfo');
+    var temp = cartString == null ? [] : json.decode(cartString.toString());
+    List<Map> tempList = (temp as List).cast();
+     List<Map> newList = [];
+    tempList.forEach((item) {
+      var newItem = item; //复制新的变量，因为Dart不让循环时修改原值
+      newItem['isCheck']=isCheck; //改变选中状态
+      newList.add(newItem);
+    });
+    cartString = json.encode(newList).toString();
+    print(cartString);
+    prefs.setString('cartInfo', cartString);
+    await getCartInfo();
     notifyListeners();
   }
 }
-

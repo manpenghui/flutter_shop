@@ -21,12 +21,19 @@ class CartPage extends StatelessWidget {
                 Provide<CartProvide>(
                   builder: (context, child, data) {
                     cartList = Provide.value<CartProvide>(context).cartList;
-                    return ListView.builder(
+                    if (cartList.length>0) {
+                      return ListView.builder(
                       itemCount: cartList.length,
                       itemBuilder: (context, index) {
                         return CartItem(cartList[index]);
                       },
                     );
+                      
+                    } else {
+                      return Center(
+                        child: Text('空空如也呢'),
+                      );
+                    }
                   },
                 ),
                 Positioned(
@@ -36,12 +43,6 @@ class CartPage extends StatelessWidget {
                 )
               ],
             );
-            // return ListView.builder(
-            //   itemCount: cartList.length,
-            //   itemBuilder: (context,index){
-            //     return CartItem(cartList[index]);
-            //   },
-            // ) ;
 
           } else {
             return Text('正在加载');

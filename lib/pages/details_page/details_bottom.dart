@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provide/provide.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../provide/cart.dart';
 import '../../provide/details_info.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../provide/currentIndex.dart';
+
 
 class DetailsBottom extends StatelessWidget {
   @override
@@ -43,8 +45,11 @@ class DetailsBottom extends StatelessWidget {
 
           ),
           InkWell(
-            onTap: ()async {
-              await Provide.value<CartProvide>(context).remove();
+            onTap: () {
+              Provide.value<CurrentIndexprovide>(context).changeIndex(2);
+              Navigator.pop(context);
+              // await Provide.value<CartProvide>(context).remove();
+              
             },
             child: Container(
                alignment: Alignment.center,

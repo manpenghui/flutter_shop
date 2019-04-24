@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provide/provide.dart';
 import './home_page.dart';
 import './cart_page.dart';
 import './category_page.dart';
 import './member_page.dart';
+import '../provide/currentIndex.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -21,36 +23,48 @@ class _IndexPageState extends State<IndexPage> {
     BottomNavigationBarItem(
         icon: Icon(CupertinoIcons.profile_circled), title: Text('会员中心')),
   ];
-  final List<Widget> tabBodies = [HomePage(), CategoryPage(), CartPage(), MemberPage()];
-  int currentIndex = 0;
-  var curentPage;
+  final List<Widget> tabBodies = [
+    HomePage(),
+    CategoryPage(),
+    CartPage(),
+    MemberPage()
+  ];
+  // int currentIndex = 0;
+  // var curentPage;
   @override
   void initState() {
     // TODO: implement initState
-    curentPage = tabBodies[currentIndex];
+    // curentPage = tabBodies[currentIndex];
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-     ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
-    return Scaffold(
-      backgroundColor: Color.fromRGBO(244, 245, 245, 1.0),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: currentIndex,
-        items: bottomTabs,
-        onTap: (index) {
-          setState(() {
-            currentIndex = index;
-            curentPage = tabBodies[currentIndex];
-          });
-        },
-      ),
-      body: IndexedStack(
-        index: currentIndex,
-        children: tabBodies,
-      ),
+    ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
+    return Provide<CurrentIndexprovide>(
+      builder: (context, child, val) {
+        int currentIndex =
+            Provide.value<CurrentIndexprovide>(context).currentIndex;
+        return Scaffold(
+          backgroundColor: Color.fromRGBO(244, 245, 245, 1.0),
+          bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            currentIndex: currentIndex,
+            items: bottomTabs,
+            onTap: (index) {
+              setState(() {
+                // currentIndex = index;
+                // curentPage = tabBodies[currentIndex];
+                Provide.value<CurrentIndexprovide>(context).changeIndex(index);
+              });
+            },
+          ),
+          body: IndexedStack(
+            index: currentIndex,
+            children: tabBodies,
+          ),
+        );
+      },
     );
   }
 }

@@ -8,10 +8,9 @@ class CartBottom extends StatelessWidget {
   Widget build(BuildContext context) {
     int allGoodsCount = Provide.value<CartProvide>(context).allGoodsCount;
     double allPrice = Provide.value<CartProvide>(context).allPrice;
-    return Provide<CartProvide>(
-      builder: (context, child, data) {
-        allGoodsCount = Provide.value<CartProvide>(context).allGoodsCount;
-        allPrice = Provide.value<CartProvide>(context).allPrice;
+    return Provide<CartProvide>(builder: (context, child, data) {
+      allGoodsCount = Provide.value<CartProvide>(context).allGoodsCount;
+      allPrice = Provide.value<CartProvide>(context).allPrice;
       return Container(
         padding: EdgeInsets.all(5.0),
         color: Colors.white,
@@ -27,18 +26,25 @@ class CartBottom extends StatelessWidget {
   }
 
   Widget selectAll(context) {
-    return Container(
-      child: Row(
-        children: <Widget>[
-          Checkbox(
-            value: true,
-            activeColor: Colors.pink,
-            onChanged: (bool val) {},
-          ),
-          Text('全选')
-        ],
-      ),
-    );
+    bool isAllCheck = Provide.value<CartProvide>(context).isAllCheck;
+    return Provide<CartProvide>(builder: (context, child, data) {
+      isAllCheck = Provide.value<CartProvide>(context).isAllCheck;
+      return Container(
+        child: Row(
+          children: <Widget>[
+            Checkbox(
+              value: isAllCheck,
+              activeColor: Colors.pink,
+              onChanged: (bool val) async {
+                await Provide.value<CartProvide>(context)
+                    .changeAllCheckState(val);
+              },
+            ),
+            Text('全选')
+          ],
+        ),
+      );
+    });
   }
 
   Widget allPricearea(context) {
